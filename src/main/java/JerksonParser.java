@@ -1,9 +1,5 @@
 import org.apache.commons.io.IOUtils;
 
-import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class JerksonParser {
 
     public String readRawDataToString() throws Exception{
@@ -19,7 +15,6 @@ public class JerksonParser {
     }
 
     public String[] format() {
-        String fieldRegex = "[!@;^%*]";
         String rawData;
         try {
             rawData = readRawDataToString();
@@ -55,10 +50,22 @@ public class JerksonParser {
         return sb.toString();
     }
 
-    public String getOutput() {
+    public String prettify(String[] objects) {
+        String output = "";
+        String[] items = new String[5];
+
+
         return null;
     }
 
+    public boolean alreadyAdded(String strToAdd, String[] strArray){
+        for(String str: strArray){
+            if(str.equalsIgnoreCase(strToAdd)){
+                return true;
+            }
+        }
+        return false;
+    }
     public int countOccurrences(String[] objects, String input) {
         int count = 0;
 

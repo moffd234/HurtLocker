@@ -43,7 +43,8 @@ public class JerkSONTest {
                 "\n" +
                 "Errors         \t \t seen: 4 times\n";
 
-        String actual = jerkson.getOutput();
+        String[] input = jerkson.format();
+        String actual = jerkson.prettify(input);
         Assert.assertEquals(expected, actual);
     }
 
@@ -138,4 +139,26 @@ public class JerkSONTest {
         Assert.assertEquals(expected, actual);
     }
 
+    @Test
+    public void testAlreadyAdded() {
+        String[] input = {"Milk", "Cookies"};
+        boolean actual = jerkson.alreadyAdded("Milk", input);
+
+        Assert.assertTrue(actual);
+    }
+
+    @Test
+    public void testAlreadyAdded2() {
+        String[] input = {"Milk", "Cookies"};
+        boolean actual = jerkson.alreadyAdded("cOoKiEs", input);
+
+        Assert.assertTrue(actual);
+    }
+    @Test
+    public void testAlreadyAddedFalse() {
+        String[] input = {"Milk", "Cookies"};
+        boolean actual = jerkson.alreadyAdded("Bread", input);
+
+        Assert.assertFalse(actual);
+    }
 }
