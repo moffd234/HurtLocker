@@ -1,6 +1,8 @@
 import org.apache.commons.io.IOUtils;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class JerksonParser {
 
@@ -18,7 +20,7 @@ public class JerksonParser {
 
     public String[] format() {
         String fieldRegex = "[!@;^%*]";
-        String rawData = null;
+        String rawData;
         try {
             rawData = readRawDataToString();
         } catch (Exception e) {
@@ -50,11 +52,32 @@ public class JerksonParser {
             }
             sb.append("; ");
         }
-        System.out.println(sb);
         return sb.toString();
     }
 
     public String getOutput() {
         return null;
+    }
+
+    public int countOccurrences(String[] objects, String input) {
+        int count = 0;
+
+        for (String entry : objects) {
+            String[] keyValuePairs = entry.split("; ");
+            for (String pair : keyValuePairs) {
+                if(checkIfContains(pair, input)){
+                    count += 1;
+                }
+            }
+        }
+        return count;
+    }
+
+    public boolean checkIfContains(String pair, String input){
+        String[] keyValue = pair.split(":");
+        if (keyValue[1].equalsIgnoreCase(" " + input)) {
+            return true;
+        }
+        return false;
     }
 }

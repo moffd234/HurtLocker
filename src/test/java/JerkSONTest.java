@@ -19,7 +19,7 @@ public class JerkSONTest {
     @Test
     public void outputTests() {
         String expected =
-                "name:    Milk \t\t seen: 6 times\n"+
+                "name:    Milk \t\t seen: 8 times\n"+
                 "============= \t \t =============\n" +
                 "Price: \t 3.23\t\t seen: 5 times\n" +
                 "-------------\t\t -------------\n" +
@@ -97,4 +97,45 @@ public class JerkSONTest {
 
         Assert.assertEquals(expected, actual);
     }
+
+    @Test
+    public void testFindOccurrences(){
+        String input = "Milk";
+        String[] objects = jerkson.format();
+        int expected = 8;
+        int actual = jerkson.countOccurrences(objects, input);
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testCookiesOccurrences() {
+        String input = "Cookies";
+        String[] objects = jerkson.format();
+        int expected = 7;
+        int actual = jerkson.countOccurrences(objects, input);
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testBreadOccurrences() {
+        String input = "Bread";
+        String[] objects = jerkson.format();
+        int expected = 6;
+        int actual = jerkson.countOccurrences(objects, input);
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testApplesOccurrences() {
+        String input = "Apples";
+        String[] objects = jerkson.format();
+        int expected = 4;
+        int actual = jerkson.countOccurrences(objects, input);
+
+        Assert.assertEquals(expected, actual);
+    }
+
 }
