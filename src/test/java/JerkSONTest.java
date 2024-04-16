@@ -2,6 +2,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 public class JerkSONTest {
     JerksonParser jerkson;
     String rawData;
@@ -160,5 +162,31 @@ public class JerkSONTest {
         boolean actual = jerkson.alreadyAdded("Bread", input);
 
         Assert.assertFalse(actual);
+    }
+
+    @Test
+    public void testGetDistinctObjs() {
+        String[] input = jerkson.format();
+        String[] expected = {"Milk", "Bread", "Cookies", "Apples"};
+        String[] actual = jerkson.getDistinctItems(input);
+
+        Assert.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void testHandleTypos() {
+        String input = "MiLk";
+        String expected = "Milk";
+
+        String actual = jerkson.handelTypos(input);
+        Assert.assertEquals(expected, actual);
+    }
+    @Test
+    public void testHandleTyposC0okies() {
+        String input = "C0okies";
+        String expected = "Cookies";
+
+        String actual = jerkson.handelTypos(input);
+        Assert.assertEquals(expected, actual);
     }
 }

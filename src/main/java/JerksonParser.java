@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JerksonParser {
-
+    int errorCount = 0;
 
     public String readRawDataToString() throws Exception{
         ClassLoader classLoader = getClass().getClassLoader();
@@ -21,6 +21,7 @@ public class JerksonParser {
             String obj = objects[i];
             System.out.println(jerkson.prettyFormat(obj, objects));
         }
+        System.out.printf("Errors\t\tseen %d times%n", jerkson.errorCount);
     }
 
     public String[] format() {
@@ -61,16 +62,37 @@ public class JerksonParser {
     }
 
     public String prettify(String[] objects) {
+        String[] distObjs = getDistinctItems(objects);
+
         return null;
     }
 
+    public String[] getDistinctItems(String[] objects) {
+        String[] distinctObjects = new String[4];
+        int index = 0;
+        for (String object : objects) {
+            String[] keyValuePairs = object.split("; ");
+            if(keyValuePairs[0].split(": ").length > 1) {
+                String value = keyValuePairs[0].split(": ")[1]; // Gets the name of the item if there is one
+                value = handelTypos(value);
+                if (!alreadyAdded(value, distinctObjects)) {
+                    distinctObjects[index] = value;
+                    index += 1;
+                }
+            }
+        }
+        return distinctObjects;
+    }
+
     public String prettyFormat(String jerkSONObject, String[] objects){
-        int errorCount = 0;
+
         String[] keyValuePairs = jerkSONObject.split("; ");
         String[] values = new String[4];
         String output = "";
+
         for (int i = 0; i < keyValuePairs.length; i++) {
             String pairs = keyValuePairs[i];
+
             try {
                 String value = pairs.split(": ")[1];
                 values[i] = value;
@@ -79,7 +101,7 @@ public class JerksonParser {
                 String price = values[1];
                 String type = values[2];
                 String date = values[3];
-                output = String.format("Name: %s\t\tseen: %s times\n=============\t" +
+                output += String.format("Name: %s\t\tseen: %s times\n=============\t" +
                         "\t=============\nprice %s\t\tseen %s times\n" +
                         "-------------\t\t-------------\n\n", name, count, price, count);
             }
@@ -92,11 +114,29 @@ public class JerksonParser {
 
     public boolean alreadyAdded(String strToAdd, String[] strArray){
         for(String str: strArray){
-            if(str.equalsIgnoreCase(strToAdd)){
-                return true;
+            if(str != null) {
+                if (str.equalsIgnoreCase(strToAdd)) {
+                    return true;
+                }
             }
         }
         return false;
+    }
+
+    public String handelTypos(String word){
+        if(word.equalsIgnoreCase("Cookies")){
+            return "Cookies";
+        }
+        if(word.equalsIgnoreCase("Bread")){
+            return "Bread";
+        }
+        if(word.equalsIgnoreCase("Milk")){
+            return "Milk";
+        }
+        if(word.equalsIgnoreCase("Apples")){
+            return "Apples";
+        }
+        return "Cookies"; // This handles when Cookies is spelled with a 0
     }
 
     public int countOccurrences(String[] objects, String input) {
@@ -115,9 +155,6 @@ public class JerksonParser {
 
     public boolean checkIfContains(String pair, String input){
         String[] keyValue = pair.split(":");
-        if (keyValue[1].equalsIgnoreCase(" " + input)) {
-            return true;
-        }
-        return false;
+        return keyValue[1].equalsIgnoreCase(" " + input);
     }
 }
