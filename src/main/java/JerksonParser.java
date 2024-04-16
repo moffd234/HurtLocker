@@ -1,11 +1,9 @@
 import org.apache.commons.io.IOUtils;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class JerksonParser {
-    int errorCount = 0;
 
     public String readRawDataToString() throws Exception{
         ClassLoader classLoader = getClass().getClassLoader();
@@ -17,11 +15,7 @@ public class JerksonParser {
         JerksonParser jerkson = new JerksonParser();
         String output = (new JerksonParser()).readRawDataToString();
         String[] objects = jerkson.format();
-        for (int i = 0; i < objects.length - 1; i++) {
-            String obj = objects[i];
-            System.out.println(jerkson.prettyFormat(obj, objects));
-        }
-        System.out.printf("Errors\t\tseen %d times%n", jerkson.errorCount);
+        System.out.println(jerkson.prettify(objects));
     }
 
     public String[] format() {
@@ -64,7 +58,32 @@ public class JerksonParser {
     public String prettify(String[] objects) {
         String[] distObjs = getDistinctItems(objects);
 
-        return null;
+        String output = "";
+        for(String itemName : distObjs){
+            output += prettyFormat(itemName, objects);
+        }
+
+        int errorCount = findKeyValueErrors(objects);
+        output += String.format("Errors\t\tseen %d times%n", errorCount);
+        return output;
+    }
+
+    public int findKeyValueErrors(String[] objects) {
+        int errorCount = 0;
+        for (String object : objects) {
+            String[] keyValuePairs = object.split("; ");
+            for (String pair : keyValuePairs) {
+                String[] keyValue = pair.split(": ");
+                if (keyValue.length != 2) {
+                    errorCount++;
+                } else {
+                    if (keyValue[0].isEmpty() || keyValue[1].isEmpty()) {
+                        errorCount++;
+                    }
+                }
+            }
+        }
+        return errorCount;
     }
 
     public String[] getDistinctItems(String[] objects) {
@@ -84,31 +103,12 @@ public class JerksonParser {
         return distinctObjects;
     }
 
-    public String prettyFormat(String jerkSONObject, String[] objects){
+    public String prettyFormat(String item, String[] objects){
 
-        String[] keyValuePairs = jerkSONObject.split("; ");
-        String[] values = new String[4];
         String output = "";
-
-        for (int i = 0; i < keyValuePairs.length; i++) {
-            String pairs = keyValuePairs[i];
-
-            try {
-                String value = pairs.split(": ")[1];
-                values[i] = value;
-                String name = values[0];
-                int count = countOccurrences(objects, name);
-                String price = values[1];
-                String type = values[2];
-                String date = values[3];
-                output += String.format("Name: %s\t\tseen: %s times\n=============\t" +
-                        "\t=============\nprice %s\t\tseen %s times\n" +
-                        "-------------\t\t-------------\n\n", name, count, price, count);
-            }
-            catch (ArrayIndexOutOfBoundsException e){
-                errorCount++;
-            }
-        }
+        int count = countOccurrences(objects, item);
+        output += String.format("Name: %s\t\tseen: %s times\n=============" +
+                "\t\t=============\n\n" , item, count);
         return output;
     }
 
@@ -154,6 +154,7 @@ public class JerksonParser {
     }
 
     public boolean checkIfContains(String pair, String input){
+        // Checks if a kv pair has a value of input
         String[] keyValue = pair.split(":");
         return keyValue[1].equalsIgnoreCase(" " + input);
     }

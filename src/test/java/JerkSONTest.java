@@ -21,29 +21,19 @@ public class JerkSONTest {
     @Test
     public void outputTests() {
         String expected =
-                "name:    Milk \t\t seen: 8 times\n"+
-                "============= \t \t =============\n" +
-                "Price: \t 3.23\t\t seen: 5 times\n" +
-                "-------------\t\t -------------\n" +
-                "Price:   1.23\t\t seen: 1 time\n" +
-                "\n" +
-                "name:   Bread\t\t seen: 6 times\n" +
-                "=============\t\t =============\n" +
-                "Price:   1.23\t\t seen: 6 times\n" +
-                "-------------\t\t -------------\n" +
-                "\n" +
-                "name: Cookies     \t seen: 8 times\n" +
-                "=============     \t =============\n" +
-                "Price:   2.25        seen: 8 times\n" +
-                "-------------        -------------\n" +
-                "\n" +
-                "name:  Apples     \t seen: 4 times\n" +
-                "=============     \t =============\n" +
-                "Price:   0.25     \t seen: 2 times\n" +
-                "-------------     \t -------------\n" +
-                "Price:   0.23  \t \t seen: 2 times\n" +
-                "\n" +
-                "Errors         \t \t seen: 4 times\n";
+                "Name: Milk\t\tseen: 8 times\n" +
+                        "=============\t\t=============\n" +
+                        "\n" +
+                        "Name: Bread\t\tseen: 6 times\n" +
+                        "=============\t\t=============\n" +
+                        "\n" +
+                        "Name: Cookies\t\tseen: 7 times\n" +
+                        "=============\t\t=============\n" +
+                        "\n" +
+                        "Name: Apples\t\tseen: 4 times\n" +
+                        "=============\t\t=============\n" +
+                        "\n" +
+                        "Errors\t\tseen 4 times\n";
 
         String[] input = jerkson.format();
         String actual = jerkson.prettify(input);
@@ -187,6 +177,15 @@ public class JerkSONTest {
         String expected = "Cookies";
 
         String actual = jerkson.handelTypos(input);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testErrorCounting() {
+        String[] input = jerkson.format();
+        int expected = 4;
+        int actual = jerkson.findKeyValueErrors(input);
+
         Assert.assertEquals(expected, actual);
     }
 }
